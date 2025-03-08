@@ -22,17 +22,13 @@ export default function DrawingCanvas() {
     if (!ctx) return;
 
     const resizeCanvas = () => {
-      const scale = window.devicePixelRatio;
-      canvas.width = window.innerWidth * scale;
-      canvas.height = window.innerHeight * scale;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
       
-      ctx.scale(scale, scale);
       ctx.strokeStyle = '#3b82f6';
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
     };
 
     resizeCanvas();
@@ -51,38 +47,34 @@ export default function DrawingCanvas() {
     }
   }, [isEnabled]);
 
-  const isQuizArea = (x: number, y: number): boolean => {
-    const quizContainer = document.querySelector('.quiz-container');
-    if (!quizContainer) return false;
+  const getCanvasPoint = (e: React.PointerEvent): Point => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0, pressure: 0 };
 
-    const rect = quizContainer.getBoundingClientRect();
-    return (
-      x >= rect.left &&
-      x <= rect.right &&
-      y >= rect.top &&
-      y <= rect.bottom
-    );
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+      pressure: e.pressure || 1
+    };
   };
 
   const startDrawing = (e: React.PointerEvent) => {
     if (!isEnabled) return;
     e.preventDefault();
     
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const pressure = e.pressure || 0.5;
-
-    if (isQuizArea(x, y)) return;
-
+    const point = getCanvasPoint(e);
     setIsDrawing(true);
-    setLastPoint({ x, y, pressure });
-    
+    setLastPoint(point);
+
     // Capture pointer to ensure we get all events
-    canvas.setPointerCapture(e.pointerId);
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.setPointerCapture(e.pointerId);
+    }
   };
 
   const draw = (e: React.PointerEvent) => {
@@ -93,23 +85,18 @@ export default function DrawingCanvas() {
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const pressure = e.pressure || 0.5;
-
-    if (isQuizArea(x, y)) {
-      stopDrawing(e);
-      return;
-    }
-
+    const point = getCanvasPoint(e);
+    
     ctx.beginPath();
     ctx.moveTo(lastPoint.x, lastPoint.y);
-    ctx.lineTo(x, y);
-    ctx.lineWidth = Math.max(1, pressure * 4);
+    ctx.lineTo(point.x, point.y);
+    
+    // Adjust line width based on pressure
+    const width = Math.max(2, point.pressure * 6);
+    ctx.lineWidth = width;
+    
     ctx.stroke();
-
-    setLastPoint({ x, y, pressure });
+    setLastPoint(point);
   };
 
   const stopDrawing = (e: React.PointerEvent) => {
@@ -168,7 +155,8 @@ export default function DrawingCanvas() {
           className="w-full h-full touch-none"
           style={{ 
             pointerEvents: isEnabled ? 'auto' : 'none',
-            cursor: isEnabled ? 'crosshair' : 'default'
+            cursor: isEnabled ? 'crosshair' : 'default',
+            touchAction: 'none'
           }}
         />
       </div>
