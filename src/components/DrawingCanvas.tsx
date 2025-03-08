@@ -1,151 +1,88 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { Canvas as FabricCanvas, PencilBrush, TPointerEventInfo, TPointerEvent } from 'fabric';
 
-interface Point {
+interface FabricPointer {
   x: number;
   y: number;
-  pressure: number;
+}
+
+interface PathCreatedEvent {
+  path: any;
+  e: PointerEvent;
 }
 
 export default function DrawingCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [lastPoint, setLastPoint] = useState<Point | null>(null);
+  const fabricCanvasRef = useRef<FabricCanvas | null>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvasRef.current || fabricCanvasRef.current) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    // Initialize Fabric canvas
+    const canvas = new FabricCanvas(canvasRef.current, {
+      isDrawingMode: true,
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
 
-    const resizeCanvas = () => {
-      const scale = window.devicePixelRatio;
-      canvas.width = window.innerWidth * scale;
-      canvas.height = window.innerHeight * scale;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-      
-      ctx.scale(scale, scale);
-      ctx.strokeStyle = '#3b82f6';
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+    // Configure drawing brush
+    canvas.freeDrawingBrush = new PencilBrush(canvas);
+    canvas.freeDrawingBrush.width = 2;
+    canvas.freeDrawingBrush.color = '#3b82f6';
+
+    // Store canvas reference
+    fabricCanvasRef.current = canvas;
+
+    // Handle window resize
+    const handleResize = () => {
+      canvas.setWidth(window.innerWidth);
+      canvas.setHeight(window.innerHeight);
+      canvas.renderAll();
     };
 
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
+    window.addEventListener('resize', handleResize);
+
+    // Prevent drawing in quiz area
+    canvas.on('mouse:down', (options: TPointerEventInfo<TPointerEvent>) => {
+      const quizContainer = document.querySelector('.quiz-container');
+      if (!quizContainer) return;
+
+      const rect = quizContainer.getBoundingClientRect();
+      const pointer = canvas.getPointer(options.e) as FabricPointer;
+
+      if (
+        pointer.x >= rect.left &&
+        pointer.x <= rect.right &&
+        pointer.y >= rect.top &&
+        pointer.y <= rect.bottom
+      ) {
+        canvas.isDrawingMode = false;
+      } else {
+        canvas.isDrawingMode = true;
+      }
+    });
+
+    // Handle pressure sensitivity for Apple Pencil
+    canvas.on('path:created', (options: PathCreatedEvent) => {
+      const path = options.path;
+      if (path && 'pressure' in options.e) {
+        const pressure = options.e.pressure || 0.5;
+        path.strokeWidth = Math.max(1, pressure * 4);
+        canvas.renderAll();
+      }
+    });
+
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('resize', handleResize);
+      canvas.dispose();
     };
   }, []);
 
-  const isQuizArea = (x: number, y: number): boolean => {
-    const quizContainer = document.querySelector('.quiz-container');
-    if (!quizContainer) return false;
-
-    const rect = quizContainer.getBoundingClientRect();
-    return (
-      x >= rect.left &&
-      x <= rect.right &&
-      y >= rect.top &&
-      y <= rect.bottom
-    );
-  };
-
-  const startDrawing = (e: React.TouchEvent | React.PointerEvent) => {
-    e.preventDefault();
-    
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    let x: number, y: number, pressure: number;
-
-    if ('touches' in e) {
-      // Touch event
-      const touch = e.touches[0];
-      x = touch.clientX;
-      y = touch.clientY;
-      pressure = 1;
-    } else {
-      // Pointer event
-      x = e.clientX;
-      y = e.clientY;
-      pressure = ('pressure' in e) ? e.pressure : 0.5;
-    }
-
-    if (isQuizArea(x, y)) return;
-
-    setIsDrawing(true);
-    setLastPoint({ x, y, pressure });
-  };
-
-  const draw = (e: React.TouchEvent | React.PointerEvent) => {
-    e.preventDefault();
-    
-    if (!isDrawing || !lastPoint) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
-
-    let x: number, y: number, pressure: number;
-
-    if ('touches' in e) {
-      // Touch event
-      const touch = e.touches[0];
-      x = touch.clientX;
-      y = touch.clientY;
-      pressure = 1;
-    } else {
-      // Pointer event
-      x = e.clientX;
-      y = e.clientY;
-      pressure = ('pressure' in e) ? e.pressure : 0.5;
-    }
-
-    if (isQuizArea(x, y)) {
-      stopDrawing();
-      return;
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(lastPoint.x, lastPoint.y);
-    ctx.lineTo(x, y);
-    
-    // Adjust line width based on pressure
-    ctx.lineWidth = Math.max(1, pressure * 4);
-    
-    ctx.stroke();
-    setLastPoint({ x, y, pressure });
-  };
-
-  const stopDrawing = () => {
-    setIsDrawing(false);
-    setLastPoint(null);
-  };
-
   return (
-    <canvas
-      ref={canvasRef}
-      onPointerDown={startDrawing}
-      onPointerMove={draw}
-      onPointerUp={stopDrawing}
-      onPointerOut={stopDrawing}
-      onPointerCancel={stopDrawing}
-      onTouchStart={startDrawing}
-      onTouchMove={draw}
-      onTouchEnd={stopDrawing}
-      className="fixed inset-0 w-full h-full touch-none"
-      style={{ 
-        zIndex: -1,
-        touchAction: 'none',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-        msUserSelect: 'none',
-        cursor: 'crosshair'
-      }}
-    />
+    <div className="fixed inset-0 w-full h-full" style={{ zIndex: -1, pointerEvents: 'auto' }}>
+      <canvas ref={canvasRef} />
+    </div>
   );
 } 
