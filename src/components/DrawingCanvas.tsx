@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { HiPencil, HiTrash } from 'react-icons/hi2';
+import { BsEraser } from 'react-icons/bs';
 
 interface Point {
   x: number;
@@ -8,11 +10,16 @@ interface Point {
   pressure: number;
 }
 
+type Tool = 'pen' | 'eraser';
+
 export default function DrawingCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
   const [lastPoint, setLastPoint] = useState<Point | null>(null);
+  const [currentTool, setCurrentTool] = useState<Tool>('pen');
+  const [currentColor, setCurrentColor] = useState('#3b82f6');
+  const colors = ['#3b82f6', '#ef4444', '#22c55e', '#eab308', '#000000'];
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -25,7 +32,7 @@ export default function DrawingCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       
-      ctx.strokeStyle = '#3b82f6';
+      ctx.strokeStyle = currentColor;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.lineWidth = 3;
@@ -37,7 +44,7 @@ export default function DrawingCanvas() {
     return () => {
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, []);
+  }, [currentColor]);
 
   const getCanvasPoint = (e: React.PointerEvent): Point => {
     const canvas = canvasRef.current;
@@ -62,10 +69,12 @@ export default function DrawingCanvas() {
     setIsDrawing(true);
     setLastPoint(point);
 
-    // Capture pointer to ensure we get all events
     const canvas = canvasRef.current;
-    if (canvas) {
+    const ctx = canvas?.getContext('2d');
+    if (canvas && ctx) {
       canvas.setPointerCapture(e.pointerId);
+      ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+      ctx.lineWidth = currentTool === 'eraser' ? 20 : 3;
     }
   };
 
@@ -83,8 +92,9 @@ export default function DrawingCanvas() {
     ctx.moveTo(lastPoint.x, lastPoint.y);
     ctx.lineTo(point.x, point.y);
     
-    // Adjust line width based on pressure
-    const width = Math.max(2, point.pressure * 6);
+    // Adjust line width based on pressure and tool
+    const baseWidth = currentTool === 'eraser' ? 20 : 3;
+    const width = Math.max(baseWidth, point.pressure * (currentTool === 'eraser' ? 30 : 6));
     ctx.lineWidth = width;
     
     ctx.stroke();
@@ -102,6 +112,13 @@ export default function DrawingCanvas() {
     }
   };
 
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
   return (
     <>
       <button
@@ -114,6 +131,57 @@ export default function DrawingCanvas() {
       >
         {isEnabled ? 'Stop Drawing' : 'Start Drawing'}
       </button>
+
+      {isEnabled && (
+        <div className="fixed bottom-20 right-4 flex flex-col gap-2 items-center bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg z-[100]">
+          <button
+            onClick={() => setCurrentTool('pen')}
+            className={`p-2 rounded-lg transition-all ${
+              currentTool === 'pen'
+                ? 'bg-blue-100 dark:bg-blue-900'
+                : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`}
+            title="Pen"
+          >
+            <HiPencil className="w-6 h-6" />
+          </button>
+          <button
+            onClick={() => setCurrentTool('eraser')}
+            className={`p-2 rounded-lg transition-all ${
+              currentTool === 'eraser'
+                ? 'bg-blue-100 dark:bg-blue-900'
+                : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`}
+            title="Eraser"
+          >
+            <BsEraser className="w-6 h-6" />
+          </button>
+          <button
+            onClick={clearCanvas}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"
+            title="Clear Canvas"
+          >
+            <HiTrash className="w-6 h-6" />
+          </button>
+          <div className="w-full h-px bg-gray-200 dark:bg-gray-700 my-1" />
+          <div className="flex flex-col gap-2">
+            {colors.map((color) => (
+              <button
+                key={color}
+                onClick={() => setCurrentColor(color)}
+                className={`w-6 h-6 rounded-full border-2 transition-all ${
+                  currentColor === color
+                    ? 'border-blue-500 scale-110'
+                    : 'border-transparent hover:scale-105'
+                }`}
+                style={{ backgroundColor: color }}
+                title={`Color: ${color}`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       <div 
         className="fixed inset-0 w-full h-full pointer-events-none"
         style={{ 
