@@ -4,7 +4,7 @@ const nextConfig = {
   output: 'standalone',
   distDir: '.next',
   experimental: {
-    appDir: true
+    // Remove appDir since it's now stable in Next.js 14
   }
 }
 
