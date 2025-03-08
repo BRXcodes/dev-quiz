@@ -105,16 +105,6 @@ export default function Quiz() {
     }));
   };
 
-  // Add mouse tracking for hover effect
-  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const button = e.currentTarget;
-    const rect = button.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    button.style.setProperty('--mouse-x', `${x}%`);
-    button.style.setProperty('--mouse-y', `${y}%`);
-  };
-
   if (!currentQuestion) {
     return (
       <div className="min-h-[60vh] p-8 animate-fadeIn">
