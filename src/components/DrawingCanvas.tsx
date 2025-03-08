@@ -31,11 +31,18 @@ export default function DrawingCanvas() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    return () => window.removeEventListener('resize', resizeCanvas);
+    // Prevent scrolling on the entire document when using Apple Pencil
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
   }, []);
 
   const isQuizArea = (point: Point): boolean => {
-    // Get the quiz container element
     const quizContainer = document.querySelector('.quiz-container');
     if (!quizContainer) return false;
 
@@ -48,46 +55,37 @@ export default function DrawingCanvas() {
     );
   };
 
-  const getCoordinates = (event: TouchEvent | MouseEvent | PointerEvent): Point | null => {
-    if (!canvasRef.current) return null;
-
-    if ('touches' in event) {
-      return {
-        x: event.touches[0].clientX,
-        y: event.touches[0].clientY
-      };
-    } else {
-      return {
-        x: event.clientX,
-        y: event.clientY
-      };
-    }
+  const getCoordinates = (event: PointerEvent): Point => {
+    return {
+      x: event.clientX,
+      y: event.clientY
+    };
   };
 
-  const startDrawing = (event: React.TouchEvent | React.MouseEvent | React.PointerEvent) => {
+  const handlePointerDown = (event: React.PointerEvent) => {
     event.preventDefault();
     const point = getCoordinates(event.nativeEvent);
-    if (!point) return;
     
     if (isQuizArea(point)) return;
 
     setIsDrawing(true);
     setLastPoint(point);
+
+    // Capture the pointer to ensure all events go to the canvas
+    (event.target as HTMLCanvasElement).setPointerCapture(event.pointerId);
   };
 
-  const draw = (event: React.TouchEvent | React.MouseEvent | React.PointerEvent) => {
+  const handlePointerMove = (event: React.PointerEvent) => {
     event.preventDefault();
-    if (!isDrawing) return;
+    if (!isDrawing || !lastPoint) return;
 
     const newPoint = getCoordinates(event.nativeEvent);
-    if (!newPoint || !lastPoint || !canvasRef.current) return;
-    
     if (isQuizArea(newPoint)) {
-      stopDrawing();
+      handlePointerUp(event);
       return;
     }
 
-    const ctx = canvasRef.current.getContext('2d');
+    const ctx = canvasRef.current?.getContext('2d');
     if (!ctx) return;
 
     ctx.beginPath();
@@ -98,32 +96,40 @@ export default function DrawingCanvas() {
     setLastPoint(newPoint);
   };
 
-  const stopDrawing = () => {
+  const handlePointerUp = (event: React.PointerEvent) => {
+    event.preventDefault();
     setIsDrawing(false);
     setLastPoint(null);
+    
+    // Release the pointer capture
+    (event.target as HTMLCanvasElement).releasePointerCapture(event.pointerId);
   };
 
   return (
-    <canvas
-      ref={canvasRef}
-      onMouseDown={startDrawing}
-      onMouseMove={draw}
-      onMouseUp={stopDrawing}
-      onMouseOut={stopDrawing}
-      onTouchStart={startDrawing}
-      onTouchMove={draw}
-      onTouchEnd={stopDrawing}
-      onPointerDown={startDrawing}
-      onPointerMove={draw}
-      onPointerUp={stopDrawing}
-      className="fixed inset-0 w-full h-full pointer-events-auto touch-none"
-      style={{ 
-        touchAction: 'none', 
-        zIndex: -1,
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-        msUserSelect: 'none'
-      }}
-    />
+    <>
+      <style jsx global>{`
+        body, html {
+          overflow: hidden;
+          position: fixed;
+          width: 100%;
+          height: 100%;
+        }
+      `}</style>
+      <canvas
+        ref={canvasRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerOut={handlePointerUp}
+        className="fixed inset-0 w-full h-full pointer-events-auto touch-none"
+        style={{ 
+          touchAction: 'none',
+          zIndex: -1,
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          msUserSelect: 'none'
+        }}
+      />
+    </>
   );
 } 
