@@ -11,7 +11,6 @@ interface Point {
 export default function DrawingCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
   const [lastPoint, setLastPoint] = useState<Point | null>(null);
 
   useEffect(() => {
@@ -39,14 +38,6 @@ export default function DrawingCanvas() {
     };
   }, []);
 
-  useEffect(() => {
-    // Update quiz container z-index when drawing is enabled/disabled
-    const quizContainer = document.querySelector('.quiz-container');
-    if (quizContainer) {
-      (quizContainer as HTMLElement).style.zIndex = isEnabled ? '1' : '2';
-    }
-  }, [isEnabled]);
-
   const getCanvasPoint = (e: React.PointerEvent): Point => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0, pressure: 0 };
@@ -63,7 +54,6 @@ export default function DrawingCanvas() {
   };
 
   const startDrawing = (e: React.PointerEvent) => {
-    if (!isEnabled) return;
     e.preventDefault();
     
     const point = getCanvasPoint(e);
@@ -78,7 +68,7 @@ export default function DrawingCanvas() {
   };
 
   const draw = (e: React.PointerEvent) => {
-    if (!isEnabled || !isDrawing || !lastPoint) return;
+    if (!isDrawing || !lastPoint) return;
     e.preventDefault();
 
     const canvas = canvasRef.current;
@@ -100,7 +90,6 @@ export default function DrawingCanvas() {
   };
 
   const stopDrawing = (e: React.PointerEvent) => {
-    if (!isEnabled) return;
     setIsDrawing(false);
     setLastPoint(null);
 
@@ -110,56 +99,27 @@ export default function DrawingCanvas() {
     }
   };
 
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  };
-
   return (
-    <>
-      <div className="fixed bottom-4 right-4 flex gap-2 z-[100]">
-        <button
-          onClick={() => setIsEnabled(!isEnabled)}
-          className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-            isEnabled
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
-          }`}
-        >
-          {isEnabled ? 'Stop Drawing' : 'Start Drawing'}
-        </button>
-        {isEnabled && (
-          <button
-            onClick={clearCanvas}
-            className="px-4 py-2 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700 transition-all duration-200"
-          >
-            Clear
-          </button>
-        )}
-      </div>
-      <div 
-        className="fixed inset-0 w-full h-full pointer-events-none"
+    <div 
+      className="fixed inset-0 w-full h-full pointer-events-none"
+      style={{ 
+        zIndex: 10,
+      }}
+    >
+      <canvas
+        ref={canvasRef}
+        onPointerDown={startDrawing}
+        onPointerMove={draw}
+        onPointerUp={stopDrawing}
+        onPointerOut={stopDrawing}
+        onPointerCancel={stopDrawing}
+        className="w-full h-full touch-none"
         style={{ 
-          zIndex: isEnabled ? 10 : -1,
+          pointerEvents: 'auto',
+          cursor: 'crosshair',
+          touchAction: 'none'
         }}
-      >
-        <canvas
-          ref={canvasRef}
-          onPointerDown={startDrawing}
-          onPointerMove={draw}
-          onPointerUp={stopDrawing}
-          onPointerOut={stopDrawing}
-          onPointerCancel={stopDrawing}
-          className="w-full h-full touch-none"
-          style={{ 
-            pointerEvents: isEnabled ? 'auto' : 'none',
-            cursor: isEnabled ? 'crosshair' : 'default',
-            touchAction: 'none'
-          }}
-        />
-      </div>
-    </>
+      />
+    </div>
   );
 } 
