@@ -30,6 +30,7 @@ export default function Quiz() {
   });
 
   const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
+  const [shuffledOptions, setShuffledOptions] = useState<{ text: string; originalIndex: number }[]>([]);
 
   useEffect(() => {
     const filtered = questions.filter(
@@ -44,13 +45,25 @@ export default function Quiz() {
 
   const currentQuestion = filteredQuestions[quizState.currentQuestionIndex];
 
-  const handleAnswer = (answerIndex: number) => {
+  // Shuffle options when question changes
+  useEffect(() => {
+    if (currentQuestion) {
+      const optionsWithIndices = currentQuestion.options.map((text, index) => ({
+        text,
+        originalIndex: index,
+      }));
+      setShuffledOptions(shuffleArray(optionsWithIndices));
+    }
+  }, [currentQuestion]);
+
+  const handleAnswer = (shuffledIndex: number) => {
     if (selectedAnswer !== null) return; // Prevent multiple answers
-    setSelectedAnswer(answerIndex);
+    const originalIndex = shuffledOptions[shuffledIndex].originalIndex;
+    setSelectedAnswer(originalIndex);
     setShowExplanation(true);
 
-    const isCorrect = answerIndex === currentQuestion.correctAnswer;
-    const newAnswers = [...quizState.answers, answerIndex];
+    const isCorrect = originalIndex === currentQuestion.correctAnswer;
+    const newAnswers = [...quizState.answers, originalIndex];
     const newScore = isCorrect ? quizState.score + 1 : quizState.score;
 
     setQuizState({
@@ -235,14 +248,14 @@ export default function Quiz() {
           )}
         </div>
         <div className="space-y-4">
-          {currentQuestion.options.map((option, index) => {
+          {shuffledOptions.map((option, shuffledIndex) => {
             let buttonStyle = "w-full text-left p-5 rounded-xl quiz-option ";
             
             if (selectedAnswer === null) {
               buttonStyle += "border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300";
-            } else if (index === currentQuestion.correctAnswer) {
+            } else if (option.originalIndex === currentQuestion.correctAnswer) {
               buttonStyle += "border-2 border-green-500 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 cursor-default";
-            } else if (index === selectedAnswer) {
+            } else if (option.originalIndex === selectedAnswer) {
               buttonStyle += "border-2 border-red-500 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 cursor-default";
             } else {
               buttonStyle += "border-2 border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-default";
@@ -250,17 +263,17 @@ export default function Quiz() {
 
             return (
               <button
-                key={index}
-                onClick={() => handleAnswer(index)}
+                key={shuffledIndex}
+                onClick={() => handleAnswer(shuffledIndex)}
                 disabled={selectedAnswer !== null}
                 className={buttonStyle}
               >
                 <div className="flex items-center justify-between relative z-10">
-                  <span className="flex-1">{option}</span>
-                  {selectedAnswer !== null && index === currentQuestion.correctAnswer && (
+                  <span className="flex-1">{option.text}</span>
+                  {selectedAnswer !== null && option.originalIndex === currentQuestion.correctAnswer && (
                     <span className="text-green-600 dark:text-green-400 text-xl ml-4">✓</span>
                   )}
-                  {selectedAnswer === index && index !== currentQuestion.correctAnswer && (
+                  {selectedAnswer === option.originalIndex && option.originalIndex !== currentQuestion.correctAnswer && (
                     <span className="text-red-600 dark:text-red-400 text-xl ml-4">✗</span>
                   )}
                 </div>
