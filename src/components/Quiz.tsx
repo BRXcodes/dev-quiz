@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Question, QuizState, QuizFilters } from '../types/quiz';
 import { questions } from '../data/questions';
+import QuizMenu from './QuizMenu';
 
 // Shuffle array function using Fisher-Yates algorithm
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -27,23 +28,43 @@ export default function Quiz() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [filters, setFilters] = useState<QuizFilters>({
-    categories: ['PHP', 'MySQL'],
-    difficulty: ['Easy', 'Medium', 'Hard'],
+    categories: [],
+    difficulty: []
   });
+  const [isQuizStarted, setIsQuizStarted] = useState(false);
 
   const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
   const [shuffledOptions, setShuffledOptions] = useState<{ text: string; originalIndex: number }[]>([]);
 
+  const handleStartQuiz = (selectedFilters: QuizFilters) => {
+    setFilters(selectedFilters);
+    setIsQuizStarted(true);
+    
+    // Reset quiz state
+    setQuizState({
+      currentQuestionIndex: 0,
+      score: 0,
+      answers: [],
+      showResults: false,
+      hintsRemaining: 3,
+      showHint: false,
+    });
+    setSelectedAnswer(null);
+    setShowExplanation(false);
+  };
+
   useEffect(() => {
-    const filtered = questions.filter(
-      (q) =>
-        filters.categories.includes(q.category) &&
-        filters.difficulty.includes(q.difficulty)
-    );
-    // Shuffle the filtered questions and take only 10
-    const shuffled = shuffleArray(filtered);
-    setFilteredQuestions(shuffled.slice(0, 10));
-  }, [filters]);
+    if (isQuizStarted) {
+      const filtered = questions.filter(
+        (q) =>
+          filters.categories.includes(q.category) &&
+          filters.difficulty.includes(q.difficulty)
+      );
+      // Shuffle the filtered questions and take only 10
+      const shuffled = shuffleArray(filtered);
+      setFilteredQuestions(shuffled.slice(0, 10));
+    }
+  }, [filters, isQuizStarted]);
 
   const currentQuestion = filteredQuestions[quizState.currentQuestionIndex];
 
@@ -103,8 +124,11 @@ export default function Quiz() {
   };
 
   const resetQuiz = () => {
-    // Reshuffle questions when resetting
-    setFilteredQuestions(shuffleArray([...filteredQuestions]));
+    setIsQuizStarted(false);
+    setFilters({
+      categories: [],
+      difficulty: []
+    });
     setQuizState({
       currentQuestionIndex: 0,
       score: 0,
@@ -135,50 +159,25 @@ export default function Quiz() {
     }));
   };
 
+  if (!isQuizStarted) {
+    return <QuizMenu onStartQuiz={handleStartQuiz} />;
+  }
+
   if (!currentQuestion) {
     return (
       <div className="min-h-[60vh] p-8 animate-fadeIn">
         <div className="max-w-2xl mx-auto glass-morphism rounded-2xl shadow-xl p-8">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">Select Your Challenge</h2>
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">Customize your quiz experience by selecting categories and difficulty levels.</p>
-          <div className="space-y-8">
-            <div className="animate-slideIn" style={{ animationDelay: '0.2s' }}>
-              <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Categories:</h3>
-              <div className="flex flex-wrap gap-3">
-                {['PHP', 'MySQL'].map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => toggleCategory(category as 'PHP' | 'MySQL')}
-                    className={`px-6 py-3 rounded-xl text-lg font-medium transform transition-all duration-200 hover:scale-105 ${
-                      filters.categories.includes(category as 'PHP' | 'MySQL')
-                        ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="animate-slideIn" style={{ animationDelay: '0.4s' }}>
-              <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Difficulty:</h3>
-              <div className="flex flex-wrap gap-3">
-                {['Easy', 'Medium', 'Hard'].map((diff) => (
-                  <button
-                    key={diff}
-                    onClick={() => toggleDifficulty(diff as 'Easy' | 'Medium' | 'Hard')}
-                    className={`px-6 py-3 rounded-xl text-lg font-medium transform transition-all duration-200 hover:scale-105 ${
-                      filters.difficulty.includes(diff as 'Easy' | 'Medium' | 'Hard')
-                        ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    {diff}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+          <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">No Questions Available</h2>
+          <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
+            No questions match your selected filters. Please try different options.
+          </p>
+          <button
+            onClick={resetQuiz}
+            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 text-white text-lg font-medium rounded-xl
+              shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105"
+          >
+            Back to Menu
+          </button>
         </div>
       </div>
     );

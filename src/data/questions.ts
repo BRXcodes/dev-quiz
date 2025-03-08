@@ -592,5 +592,458 @@ WHERE last_login > DATE_SUB(NOW(), INTERVAL 30 DAY);`,
     correctAnswer: 1,
     explanation: 'A view is a stored SQL query that acts as a virtual table. Benefits: 1) Simplifies complex queries by saving them as views, 2) Provides data security by restricting column/row access, 3) Ensures data consistency across applications, 4) No physical storage used - data generated on query. Views can be updatable under certain conditions.',
     hint: 'Consider how this helps simplify complex queries.'
+  },
+  {
+    id: 36,
+    category: 'PHP',
+    difficulty: 'Easy',
+    question: 'What is the purpose of the PHP $_SESSION superglobal?',
+    options: [
+      'To store temporary data for current user session',
+      'To store permanent data in database',
+      'To handle form submissions',
+      'To manage cookie data'
+    ],
+    correctAnswer: 0,
+    explanation: '$_SESSION is used to store user data across multiple pages during a session. The data persists until the browser is closed or session is explicitly destroyed. Common uses include storing login status, user preferences, and temporary data that needs to persist across multiple page loads.',
+    hint: 'Think about how websites remember you are logged in while browsing different pages.'
+  },
+  {
+    id: 37,
+    category: 'MySQL',
+    difficulty: 'Medium',
+    question: 'What is the difference between WHERE and HAVING clauses in MySQL?',
+    code: `SELECT department, AVG(salary) as avg_salary 
+FROM employees 
+WHERE salary > 30000 
+GROUP BY department 
+HAVING avg_salary > 50000;`,
+    options: [
+      'They are interchangeable clauses',
+      'WHERE filters rows before grouping, HAVING filters after',
+      'HAVING is used for simple conditions only',
+      'WHERE is only used with GROUP BY'
+    ],
+    correctAnswer: 1,
+    explanation: 'WHERE filters individual rows before they are grouped, while HAVING filters groups after GROUP BY is applied. HAVING can use aggregate functions (like AVG, COUNT) since it operates on grouped data, whereas WHERE cannot use aggregate functions.',
+    hint: 'Consider when each clause is applied in relation to the GROUP BY operation.'
+  },
+  {
+    id: 38,
+    category: 'PHP',
+    difficulty: 'Medium',
+    question: 'What is dependency injection in PHP and why is it used?',
+    code: `class UserController {
+    private $userService;
+    
+    public function __construct(UserService $userService) {
+        $this->userService = $userService;
+    }
+}`,
+    options: [
+      'A way to include external files',
+      'A design pattern for handling dependencies',
+      'A method for database connections',
+      'A type of error handling'
+    ],
+    correctAnswer: 1,
+    explanation: 'Dependency injection is a design pattern where dependencies are "injected" into a class rather than created inside it. Benefits include: 1) Better testing as dependencies can be mocked, 2) Loose coupling between classes, 3) More flexible and maintainable code, 4) Easier to modify dependencies without changing the class code.',
+    hint: 'Think about how classes can receive their dependencies from outside rather than creating them internally.'
+  },
+  {
+    id: 39,
+    category: 'MySQL',
+    difficulty: 'Easy',
+    question: 'What is the purpose of an INDEX in MySQL?',
+    code: `CREATE INDEX idx_email ON users(email);
+SELECT * FROM users WHERE email = 'test@example.com';`,
+    options: [
+      'To format data in tables',
+      'To speed up data retrieval',
+      'To validate data entry',
+      'To create table relationships'
+    ],
+    correctAnswer: 1,
+    explanation: 'An INDEX is a data structure that improves the speed of data retrieval operations by providing quick access to rows in a database table. Like a book\'s index, it helps MySQL find data without scanning the entire table. However, indexes add overhead for write operations (INSERT, UPDATE, DELETE) and take additional storage space.',
+    hint: 'Think about how a book\'s index helps you find information quickly.'
+  },
+  {
+    id: 40,
+    category: 'PHP',
+    difficulty: 'Hard',
+    question: 'What is the output of this closure code?',
+    code: `$x = 1;
+$closure = function() use ($x) {
+    echo $x;
+    $x = 2;
+};
+$x = 3;
+$closure();
+echo $x;`,
+    options: [
+      'Outputs "13"',
+      'Outputs "33"',
+      'Outputs "12"',
+      'Outputs "23"'
+    ],
+    correctAnswer: 0,
+    explanation: 'The closure captures the value of $x (1) when it\'s created, not its reference. When $x is later changed to 3 outside the closure, the closure still has the original value (1). The change to $x inside the closure only affects the closure\'s copy. Therefore, it outputs "1" from the closure and "3" from the echo statement.',
+    hint: 'Consider how closures capture variables by value using the "use" keyword.'
+  },
+  {
+    id: 41,
+    category: 'MySQL',
+    difficulty: 'Medium',
+    question: 'What is the difference between INNER JOIN and LEFT JOIN?',
+    code: `-- Query 1
+SELECT users.name, orders.order_date 
+FROM users INNER JOIN orders 
+ON users.id = orders.user_id;
+
+-- Query 2
+SELECT users.name, orders.order_date 
+FROM users LEFT JOIN orders 
+ON users.id = orders.user_id;`,
+    options: [
+      'No difference in result set',
+      'LEFT JOIN includes unmatched rows',
+      'INNER JOIN is faster',
+      'LEFT JOIN uses less memory'
+    ],
+    correctAnswer: 1,
+    explanation: 'INNER JOIN returns only rows where there\'s a match in both tables. LEFT JOIN returns all rows from the left table (users) and matching rows from the right table (orders). If there\'s no match, NULL values are returned for the right table columns. This is useful when you want to see all users, even those without orders.',
+    hint: 'Think about what happens to rows that don\'t have matches in the other table.'
+  },
+  {
+    id: 42,
+    category: 'PHP',
+    difficulty: 'Easy',
+    question: 'What is the difference between include and require in PHP?',
+    options: [
+      'No difference, they are aliases',
+      'require stops execution on error',
+      'include is faster',
+      'require works with remote files'
+    ],
+    correctAnswer: 1,
+    explanation: 'require generates a fatal error (E_COMPILE_ERROR) and stops script execution if the file is not found or cannot be included. include only generates a warning (E_WARNING) and continues script execution. Use require when the file is absolutely necessary for the application to function, and include when the file is optional.',
+    hint: 'Think about how critical the included file is to your application.'
+  },
+  {
+    id: 43,
+    category: 'MySQL',
+    difficulty: 'Hard',
+    question: 'What is the purpose of a transaction in MySQL?',
+    code: `START TRANSACTION;
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+COMMIT;`,
+    options: [
+      'To improve query performance',
+      'To ensure data consistency',
+      'To compress database size',
+      'To create database backups'
+    ],
+    correctAnswer: 1,
+    explanation: 'Transactions ensure that a series of SQL operations are executed as a single unit of work. They follow ACID properties: Atomicity (all or nothing), Consistency (valid state), Isolation (concurrent transactions don\'t interfere), and Durability (committed changes persist). If any operation fails, the entire transaction is rolled back.',
+    hint: 'Consider what happens if power fails during a bank transfer between accounts.'
+  },
+  {
+    id: 44,
+    category: 'PHP',
+    difficulty: 'Medium',
+    question: 'What is the purpose of PHP namespaces?',
+    code: `namespace App\\Controllers;
+
+use App\\Models\\User;
+use App\\Services\\Auth;
+
+class UserController {
+    // ...
+}`,
+    options: [
+      'To organize code into folders',
+      'To avoid name collisions',
+      'To improve code performance',
+      'To create private classes'
+    ],
+    correctAnswer: 1,
+    explanation: 'Namespaces solve two problems: 1) Name collisions between code you create and internal/third-party classes/libraries, 2) Ability to alias (shorten) long names to improve readability. They provide a way to encapsulate related items and are especially important in larger applications.',
+    hint: 'Think about how different libraries might have classes with the same name.'
+  },
+  {
+    id: 45,
+    category: 'MySQL',
+    difficulty: 'Easy',
+    question: 'What is the purpose of the GROUP BY clause?',
+    code: `SELECT department, COUNT(*) as employee_count,
+       AVG(salary) as avg_salary
+FROM employees
+GROUP BY department;`,
+    options: [
+      'To sort results',
+      'To group rows for aggregation',
+      'To filter results',
+      'To join tables'
+    ],
+    correctAnswer: 1,
+    explanation: 'GROUP BY groups rows that have the same values in specified columns into summary rows. It\'s typically used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to generate summary reports. Each group in the result set contains one row for each unique value of the grouped column.',
+    hint: 'Think about how you would calculate statistics for different categories.'
+  },
+  {
+    id: 46,
+    category: 'PHP',
+    difficulty: 'Hard',
+    question: 'What is the difference between abstract classes and traits in PHP?',
+    code: `abstract class Database {
+    abstract public function connect();
+    public function query() { /* ... */ }
+}
+
+trait Loggable {
+    public function log($message) { /* ... */ }
+}`,
+    options: [
+      'No significant differences',
+      'Multiple traits can be used',
+      'Abstract classes are faster',
+      'Traits support multiple inheritance'
+    ],
+    correctAnswer: 1,
+    explanation: 'Key differences: 1) A class can implement multiple traits but can extend only one abstract class, 2) Abstract classes can have constructor methods and properties, traits cannot, 3) Abstract classes can define a common interface with some implemented methods, while traits are purely for code reuse, 4) Traits cannot enforce method implementation like abstract classes can.',
+    hint: 'Consider the limitations of single inheritance in PHP.'
+  },
+  {
+    id: 47,
+    category: 'MySQL',
+    difficulty: 'Medium',
+    question: 'What is a subquery in MySQL and when should it be used?',
+    code: `SELECT name, salary 
+FROM employees 
+WHERE salary > (
+    SELECT AVG(salary) 
+    FROM employees
+);`,
+    options: [
+      'A query inside another query',
+      'A backup query if main fails',
+      'A query that runs faster',
+      'A simplified query format'
+    ],
+    correctAnswer: 0,
+    explanation: 'A subquery is a query nested inside another query. Use cases: 1) Comparing values against aggregated results, 2) Checking existence of related records, 3) Creating derived tables for complex calculations. While powerful, subqueries can impact performance and should be used judiciously - sometimes JOINs are more efficient.',
+    hint: 'Think about when you need to use the result of one query in another query.'
+  },
+  {
+    id: 48,
+    category: 'PHP',
+    difficulty: 'Easy',
+    question: 'What are PHP magic constants?',
+    code: `echo __FILE__;  // Full path of this file
+echo __LINE__;  // Current line number
+echo __CLASS__; // Current class name`,
+    options: [
+      'User-defined constants',
+      'Predefined special values',
+      'Mathematical constants',
+      'Configuration values'
+    ],
+    correctAnswer: 1,
+    explanation: 'Magic constants are predefined constants that change value depending on where they are used. Common ones include: __LINE__ (current line), __FILE__ (current file path), __DIR__ (directory of file), __CLASS__ (current class), __METHOD__ (current method), __NAMESPACE__ (current namespace). They\'re useful for debugging and logging.',
+    hint: 'Think about values that PHP automatically provides based on the current context.'
+  },
+  {
+    id: 49,
+    category: 'MySQL',
+    difficulty: 'Hard',
+    question: 'What is the difference between DELETE and TRUNCATE in MySQL?',
+    code: `-- Query 1
+DELETE FROM users;
+
+-- Query 2
+TRUNCATE TABLE users;`,
+    options: [
+      'No practical difference',
+      'Different transaction handling',
+      'TRUNCATE is slower',
+      'DELETE is more secure'
+    ],
+    correctAnswer: 1,
+    explanation: 'Key differences: 1) TRUNCATE is DDL (resets auto-increment), DELETE is DML, 2) TRUNCATE cannot be rolled back in transactions, DELETE can, 3) TRUNCATE is faster as it drops and recreates the table, 4) DELETE removes rows one by one and logs each deletion. Use TRUNCATE for complete table cleanup, DELETE for conditional row removal.',
+    hint: 'Consider how each command handles transactions and auto-increment values.'
+  },
+  {
+    id: 50,
+    category: 'PHP',
+    difficulty: 'Medium',
+    question: 'What is the purpose of the PHP yield keyword?',
+    code: `function getRange($max) {
+    for ($i = 0; $i < $max; $i++) {
+        yield $i;
+    }
+}
+foreach (getRange(1000000) as $number) {
+    echo $number;
+}`,
+    options: [
+      'To pause function execution',
+      'To create generator functions',
+      'To handle errors gracefully',
+      'To optimize loops'
+    ],
+    correctAnswer: 1,
+    explanation: 'yield creates a generator function that returns an Iterator object. Benefits: 1) Memory efficient - values generated one at a time, not stored in array, 2) Perfect for large datasets, 3) Can pause and resume execution. In the example, instead of creating a million-element array, it generates values on demand.',
+    hint: 'Think about memory usage when working with large datasets.'
+  },
+  {
+    id: 51,
+    category: 'MySQL',
+    difficulty: 'Easy',
+    question: 'What is the purpose of the LIKE operator in MySQL?',
+    code: `SELECT * FROM users 
+WHERE email LIKE '%@gmail.com';`,
+    options: [
+      'For exact string matching',
+      'For pattern matching',
+      'For numeric comparisons',
+      'For NULL checking'
+    ],
+    correctAnswer: 1,
+    explanation: 'LIKE performs pattern matching using wildcards: % (matches any number of characters) and _ (matches exactly one character). Common uses: 1) Finding emails from specific domains, 2) Searching for partial names, 3) Finding patterns in text. Note: LIKE with leading wildcard (%) can\'t use indexes effectively.',
+    hint: 'Think about how you would search for partial matches in text.'
+  },
+  {
+    id: 52,
+    category: 'PHP',
+    difficulty: 'Hard',
+    question: 'What is the difference between PDO and MySQLi in PHP?',
+    code: `// PDO
+$pdo = new PDO("mysql:host=localhost;dbname=test", $user, $pass);
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+
+// MySQLi
+$mysqli = new mysqli("localhost", $user, $pass, "test");
+$stmt = $mysqli->prepare("SELECT * FROM users WHERE id = ?");`,
+    options: [
+      'PDO supports more databases',
+      'MySQLi has better performance',
+      'PDO is newer technology',
+      'MySQLi is more secure'
+    ],
+    correctAnswer: 0,
+    explanation: 'Key differences: 1) PDO supports multiple database types, MySQLi only MySQL, 2) PDO offers a consistent interface across databases, 3) Both support prepared statements and are equally secure, 4) PDO has more features like error handling modes and attribute settings. Choose PDO for database-agnostic code, MySQLi for MySQL-specific features.',
+    hint: 'Consider which might be better if you need to switch database systems later.'
+  },
+  {
+    id: 53,
+    category: 'MySQL',
+    difficulty: 'Medium',
+    question: 'What is a stored procedure and when should it be used?',
+    code: `DELIMITER //
+CREATE PROCEDURE GetUserOrders(IN userId INT)
+BEGIN
+    SELECT * FROM orders 
+    WHERE user_id = userId;
+END //
+DELIMITER ;
+
+CALL GetUserOrders(123);`,
+    options: [
+      'A saved query template',
+      'A precompiled SQL routine',
+      'A table backup method',
+      'A data validation rule'
+    ],
+    correctAnswer: 1,
+    explanation: 'A stored procedure is a precompiled collection of SQL statements stored in the database. Benefits: 1) Better performance as procedures are pre-compiled, 2) Reduced network traffic, 3) Centralized business logic, 4) Enhanced security through granular permissions. Use when logic needs to be reused or when reducing network traffic is important.',
+    hint: 'Think about reusable SQL code that runs on the database server.'
+  },
+  {
+    id: 54,
+    category: 'PHP',
+    difficulty: 'Easy',
+    question: 'What is the purpose of the PHP header() function?',
+    code: `header('Location: dashboard.php');
+header('Content-Type: application/json');
+header('Cache-Control: no-cache');`,
+    options: [
+      'To create HTML headers',
+      'To send HTTP headers',
+      'To format page layout',
+      'To include file headers'
+    ],
+    correctAnswer: 1,
+    explanation: 'header() sends raw HTTP headers to the client. Common uses: 1) Redirecting users to different pages, 2) Specifying content types, 3) Setting cookies, 4) Controlling caching behavior. Important: Must be called before any actual output is sent to the browser (including HTML and whitespace).',
+    hint: 'Think about communication between server and browser before content is sent.'
+  },
+  {
+    id: 55,
+    category: 'MySQL',
+    difficulty: 'Hard',
+    question: 'What is database normalization and why is it important?',
+    code: `-- Unnormalized
+CREATE TABLE orders (
+    id INT,
+    customer_name VARCHAR(100),
+    customer_email VARCHAR(100),
+    product_name VARCHAR(100),
+    product_price DECIMAL(10,2)
+);
+
+-- Normalized
+CREATE TABLE customers (
+    id INT,
+    name VARCHAR(100),
+    email VARCHAR(100)
+);
+CREATE TABLE products (
+    id INT,
+    name VARCHAR(100),
+    price DECIMAL(10,2)
+);
+CREATE TABLE orders (
+    id INT,
+    customer_id INT,
+    product_id INT
+);`,
+    options: [
+      'A way to compress data',
+      'A database design process',
+      'A backup strategy',
+      'A query optimization method'
+    ],
+    correctAnswer: 1,
+    explanation: 'Normalization is a database design technique that reduces data redundancy and dependency by organizing fields and tables. Benefits: 1) Eliminates redundant data, 2) Ensures data consistency, 3) Reduces update anomalies, 4) Makes the database more flexible for future changes. Common forms are 1NF, 2NF, and 3NF, each addressing specific types of dependencies.',
+    hint: 'Think about organizing data to minimize redundancy and maintain consistency.'
+  },
+  {
+    id: 75,
+    category: 'PHP',
+    difficulty: 'Medium',
+    question: 'What is the MVC pattern and why is it used in PHP applications?',
+    code: `// Model
+class UserModel {
+    public function getUser($id) { /* ... */ }
+}
+
+// Controller
+class UserController {
+    public function show($id) {
+        $user = new UserModel()->getUser($id);
+        require 'view/user.php';
+    }
+}
+
+// View
+<h1><?php echo $user->name; ?></h1>`,
+    options: [
+      'A file organization system',
+      'A design pattern for separation of concerns',
+      'A database management pattern',
+      'A security implementation'
+    ],
+    correctAnswer: 1,
+    explanation: 'MVC (Model-View-Controller) separates application logic into three components: 1) Model: handles data and business logic, 2) View: handles presentation and UI, 3) Controller: handles user input and coordinates Model and View. Benefits include better organization, code reuse, and easier maintenance.',
+    hint: 'Think about how to separate different aspects of an application.'
   }
 ]; 
