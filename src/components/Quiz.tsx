@@ -37,8 +37,9 @@ export default function Quiz() {
         filters.categories.includes(q.category) &&
         filters.difficulty.includes(q.difficulty)
     );
-    // Shuffle the filtered questions
-    setFilteredQuestions(shuffleArray(filtered));
+    // Shuffle the filtered questions and take only 10
+    const shuffled = shuffleArray(filtered);
+    setFilteredQuestions(shuffled.slice(0, 10));
   }, [filters]);
 
   const currentQuestion = filteredQuestions[quizState.currentQuestionIndex];
@@ -156,23 +157,33 @@ export default function Quiz() {
   }
 
   if (quizState.showResults) {
+    const percentage = ((quizState.score / 10) * 100);
+    let grade = 'F';
+    if (percentage >= 90) grade = 'A';
+    else if (percentage >= 80) grade = 'B';
+    else if (percentage >= 70) grade = 'C';
+    else if (percentage >= 60) grade = 'D';
+
     return (
       <div className="min-h-[60vh] p-8 animate-fadeIn">
         <div className="max-w-2xl mx-auto glass-morphism rounded-2xl shadow-xl p-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">Quiz Complete! 🎉</h2>
             <div className="mb-8">
+              <div className="text-6xl font-bold mb-4 animate-bounce" style={{ color: grade === 'A' ? '#22c55e' : grade === 'B' ? '#3b82f6' : grade === 'C' ? '#eab308' : grade === 'D' ? '#f97316' : '#ef4444' }}>
+                Grade: {grade}
+              </div>
               <div className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-4">
-                {((quizState.score / filteredQuestions.length) * 100).toFixed(0)}%
+                {percentage.toFixed(0)}%
               </div>
               <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
-                You scored {quizState.score} out of {filteredQuestions.length}
+                You scored {quizState.score} out of 10
               </p>
               <div className="w-full h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden mb-6">
                 <div
                   className="h-full bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500 transition-all duration-1000 ease-out"
                   style={{
-                    width: `${(quizState.score / filteredQuestions.length) * 100}%`,
+                    width: `${percentage}%`,
                   }}
                 />
               </div>
@@ -182,7 +193,7 @@ export default function Quiz() {
               className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 text-white text-lg font-medium rounded-xl
                 shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105"
             >
-              Try Again
+              Try Another Quiz
             </button>
           </div>
         </div>
