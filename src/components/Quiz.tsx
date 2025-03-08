@@ -20,6 +20,8 @@ export default function Quiz() {
     score: 0,
     answers: [],
     showResults: false,
+    hintsRemaining: 3,
+    showHint: false,
   });
 
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -73,6 +75,16 @@ export default function Quiz() {
     });
   };
 
+  const handleHint = () => {
+    if (quizState.hintsRemaining > 0 && !showExplanation) {
+      setQuizState(prev => ({
+        ...prev,
+        hintsRemaining: prev.hintsRemaining - 1,
+        showHint: true
+      }));
+    }
+  };
+
   const handleNext = () => {
     if (quizState.currentQuestionIndex === filteredQuestions.length - 1) {
       setQuizState(prev => ({
@@ -83,6 +95,7 @@ export default function Quiz() {
       setQuizState(prev => ({
         ...prev,
         currentQuestionIndex: prev.currentQuestionIndex + 1,
+        showHint: false,
       }));
       setSelectedAnswer(null);
       setShowExplanation(false);
@@ -97,6 +110,8 @@ export default function Quiz() {
       score: 0,
       answers: [],
       showResults: false,
+      hintsRemaining: 3,
+      showHint: false,
     });
     setSelectedAnswer(null);
     setShowExplanation(false);
@@ -221,9 +236,14 @@ export default function Quiz() {
           <span className="text-lg font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg">
             Question {quizState.currentQuestionIndex + 1} of {filteredQuestions.length}
           </span>
-          <span className="text-lg font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-2 rounded-lg">
-            Score: {quizState.score}
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-lg font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-4 py-2 rounded-lg">
+              Score: {quizState.score}
+            </span>
+            <span className="text-lg font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-4 py-2 rounded-lg">
+              Hints: {quizState.hintsRemaining}
+            </span>
+          </div>
         </div>
         <div className="mb-8 animate-slideIn">
           <div className="flex items-center gap-3 mb-6">
@@ -281,6 +301,25 @@ export default function Quiz() {
             );
           })}
         </div>
+        {!selectedAnswer && !quizState.showHint && quizState.hintsRemaining > 0 && (
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={handleHint}
+              className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white text-lg font-medium rounded-xl
+                shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105"
+            >
+              Use Hint ({quizState.hintsRemaining} remaining)
+            </button>
+          </div>
+        )}
+        {quizState.showHint && (
+          <div className="mt-6 p-6 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border-2 border-emerald-100 dark:border-emerald-800 animate-fadeIn">
+            <p className="text-lg text-emerald-800 dark:text-emerald-300">
+              <span className="font-semibold">Hint: </span>
+              {currentQuestion.hint}
+            </p>
+          </div>
+        )}
         {showExplanation && (
           <div className={`mt-6 p-6 rounded-xl shadow-inner animate-fadeIn ${
             selectedAnswer === currentQuestion.correctAnswer 

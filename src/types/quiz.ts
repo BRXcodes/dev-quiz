@@ -7,6 +7,7 @@ export interface Question {
   options: string[];
   correctAnswer: number;
   explanation: string;
+  hint: string;
 }
 
 export interface QuizState {
@@ -14,6 +15,8 @@ export interface QuizState {
   score: number;
   answers: number[];
   showResults: boolean;
+  hintsRemaining: number;
+  showHint: boolean;
 }
 
 export interface QuizFilters {
