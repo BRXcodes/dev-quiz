@@ -2,14 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
-  distDir: '.next',
-  trailingSlash: false,
-  skipTrailingSlashRedirect: true,
-  swcMinify: true,
-  basePath: '',
-  experimental: {
-    appDir: true
-  }
+  swcMinify: true
 }
 
 module.exports = nextConfig 
