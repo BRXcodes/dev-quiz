@@ -1,17 +1,42 @@
-# PHP & MySQL Interview Quiz
+# 🎯 Dev Quiz Master
 
-An interactive quiz application for junior fullstack developers to practice common PHP and MySQL interview questions. Built with Next.js, TypeScript, and Tailwind CSS.
+A modern, interactive quiz application designed to help developers sharpen their programming skills. Built with Next.js, TypeScript, and Tailwind CSS, featuring a unique drawing canvas for note-taking while you learn!
 
-## Features
+![Next.js](https://img.shields.io/badge/Next.js-14-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![Tailwind](https://img.shields.io/badge/Tailwind-3-38bdf8)
 
-- Multiple choice questions covering PHP and MySQL concepts
-- Filter questions by category and difficulty level
-- Code snippets for practical questions
+## ✨ Features
+
+### 📚 Comprehensive Learning
+- Multiple programming categories:
+  - JavaScript fundamentals
+  - Python essentials
+  - React concepts
+  - PHP basics
+  - MySQL queries
+- Questions for all skill levels (Easy, Medium, Hard)
+- Detailed explanations and code snippets
 - Instant feedback and scoring
-- Responsive design for all devices
-- Modern and clean user interface
 
-## Getting Started
+### 🎨 Interactive Drawing Canvas
+- Take notes while you learn
+- Apple Pencil support for iPad users
+- Multiple drawing tools:
+  - Pen with pressure sensitivity
+  - Eraser
+  - Color palette
+  - Clear canvas option
+- Toggle drawing mode with a single click
+
+### 💫 Modern UI/UX
+- Clean, responsive design
+- Dark/Light theme support
+- Smooth animations
+- Mobile-friendly interface
+- Code syntax highlighting
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -30,43 +55,55 @@ git clone <your-repo-url>
 npm install
 ```
 
-3. Run the development server:
+3. Start the development server:
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Deployment on Vercel
+## 🛠️ Development
 
-The easiest way to deploy this app is to use the [Vercel Platform](https://vercel.com/new).
+```bash
+npm run dev    # Start development server
+npm run build  # Build for production
+npm run start  # Start production server
+npm run lint   # Check code quality
+```
 
-1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
-2. Import your repository on Vercel
-3. Vercel will automatically detect Next.js and deploy your app
+## 🔧 Tech Stack
 
-## Development
+- **Framework**: [Next.js 14](https://nextjs.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Icons**: [React Icons](https://react-icons.github.io/react-icons/)
+- **UI Components**: Custom-built with React
+- **Drawing**: HTML5 Canvas with pressure sensitivity
 
-- `npm run dev` - Start the development server
-- `npm run build` - Build the application for production
-- `npm run start` - Start the production server
-- `npm run lint` - Run ESLint to check code quality
+## 🤝 Contributing
 
-## Technologies Used
+We welcome contributions! Here's how you can help:
 
-- [Next.js](https://nextjs.org/) - React framework
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
-- [Tailwind CSS](https://tailwindcss.com/) - Styling
-- [React](https://reactjs.org/) - UI library
+1. 📝 Add new questions and categories
+2. 🎨 Improve the UI/UX design
+3. ✨ Add new features
+4. 🐛 Fix bugs
+5. 📚 Improve documentation
 
-## Contributing
+## 📄 License
 
-Feel free to contribute by:
-1. Adding more questions
-2. Improving the UI/UX
-3. Adding new features
-4. Fixing bugs
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## License
+## 🌟 Upcoming Features
 
-This project is licensed under the MIT License.
+- [ ] More programming categories
+- [ ] Save drawings with questions
+- [ ] Progress tracking
+- [ ] User accounts
+- [ ] Social sharing
+
+---
+
+<div align="center">
+Made with ❤️ for developers who love to learn
+</div>
