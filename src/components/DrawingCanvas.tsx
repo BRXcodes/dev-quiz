@@ -65,6 +65,7 @@ export default function DrawingCanvas() {
   };
 
   const startDrawing = (event: React.TouchEvent | React.MouseEvent | React.PointerEvent) => {
+    event.preventDefault();
     const point = getCoordinates(event.nativeEvent);
     if (!point) return;
     
@@ -75,6 +76,7 @@ export default function DrawingCanvas() {
   };
 
   const draw = (event: React.TouchEvent | React.MouseEvent | React.PointerEvent) => {
+    event.preventDefault();
     if (!isDrawing) return;
 
     const newPoint = getCoordinates(event.nativeEvent);
@@ -114,8 +116,14 @@ export default function DrawingCanvas() {
       onPointerDown={startDrawing}
       onPointerMove={draw}
       onPointerUp={stopDrawing}
-      className="fixed inset-0 w-full h-full pointer-events-auto"
-      style={{ touchAction: 'none', zIndex: -1 }}
+      className="fixed inset-0 w-full h-full pointer-events-auto touch-none"
+      style={{ 
+        touchAction: 'none', 
+        zIndex: -1,
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        msUserSelect: 'none'
+      }}
     />
   );
 } 
