@@ -5,13 +5,13 @@ import { useEffect, useRef, useState } from 'react';
 interface Point {
   x: number;
   y: number;
+  pressure: number;
 }
 
 export default function DrawingCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [lastPoint, setLastPoint] = useState<Point | null>(null);
-  const [isPencil, setIsPencil] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -29,7 +29,6 @@ export default function DrawingCanvas() {
       
       ctx.scale(scale, scale);
       ctx.strokeStyle = '#3b82f6';
-      ctx.lineWidth = 2;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
     };
@@ -42,95 +41,110 @@ export default function DrawingCanvas() {
     };
   }, []);
 
-  const isQuizArea = (point: Point): boolean => {
+  const isQuizArea = (x: number, y: number): boolean => {
     const quizContainer = document.querySelector('.quiz-container');
     if (!quizContainer) return false;
 
     const rect = quizContainer.getBoundingClientRect();
     return (
-      point.x >= rect.left &&
-      point.x <= rect.right &&
-      point.y >= rect.top &&
-      point.y <= rect.bottom
+      x >= rect.left &&
+      x <= rect.right &&
+      y >= rect.top &&
+      y <= rect.bottom
     );
   };
 
-  const getCoordinates = (event: PointerEvent): Point => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return { x: 0, y: 0 };
-
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
-    };
-  };
-
-  const handlePointerDown = (event: React.PointerEvent) => {
-    // Check if it's an Apple Pencil (or other stylus)
-    if (event.pointerType === 'pen') {
-      setIsPencil(true);
-    } else if (event.pointerType === 'touch') {
-      setIsPencil(false);
-      return; // Allow normal touch scrolling
-    }
+  const startDrawing = (e: React.TouchEvent | React.PointerEvent) => {
+    e.preventDefault();
     
-    const point = getCoordinates(event.nativeEvent);
-    if (isQuizArea(point)) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    let x: number, y: number, pressure: number;
+
+    if ('touches' in e) {
+      // Touch event
+      const touch = e.touches[0];
+      x = touch.clientX;
+      y = touch.clientY;
+      pressure = 1;
+    } else {
+      // Pointer event
+      x = e.clientX;
+      y = e.clientY;
+      pressure = ('pressure' in e) ? e.pressure : 0.5;
+    }
+
+    if (isQuizArea(x, y)) return;
 
     setIsDrawing(true);
-    setLastPoint(point);
-    
-    // Only capture pointer for pencil events
-    if (event.pointerType === 'pen') {
-      (event.target as HTMLCanvasElement).setPointerCapture(event.pointerId);
-    }
+    setLastPoint({ x, y, pressure });
   };
 
-  const handlePointerMove = (event: React.PointerEvent) => {
-    // Only draw if using pencil and isDrawing is true
-    if (!isDrawing || !lastPoint || !isPencil) return;
+  const draw = (e: React.TouchEvent | React.PointerEvent) => {
+    e.preventDefault();
+    
+    if (!isDrawing || !lastPoint) return;
 
-    const newPoint = getCoordinates(event.nativeEvent);
-    if (isQuizArea(newPoint)) {
-      handlePointerUp(event);
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    let x: number, y: number, pressure: number;
+
+    if ('touches' in e) {
+      // Touch event
+      const touch = e.touches[0];
+      x = touch.clientX;
+      y = touch.clientY;
+      pressure = 1;
+    } else {
+      // Pointer event
+      x = e.clientX;
+      y = e.clientY;
+      pressure = ('pressure' in e) ? e.pressure : 0.5;
+    }
+
+    if (isQuizArea(x, y)) {
+      stopDrawing();
       return;
     }
 
-    const ctx = canvasRef.current?.getContext('2d');
-    if (!ctx) return;
-
     ctx.beginPath();
     ctx.moveTo(lastPoint.x, lastPoint.y);
-    ctx.lineTo(newPoint.x, newPoint.y);
+    ctx.lineTo(x, y);
+    
+    // Adjust line width based on pressure
+    ctx.lineWidth = Math.max(1, pressure * 4);
+    
     ctx.stroke();
-
-    setLastPoint(newPoint);
+    setLastPoint({ x, y, pressure });
   };
 
-  const handlePointerUp = (event: React.PointerEvent) => {
-    if (event.pointerType === 'pen') {
-      setIsPencil(false);
-      setIsDrawing(false);
-      setLastPoint(null);
-      (event.target as HTMLCanvasElement).releasePointerCapture(event.pointerId);
-    }
+  const stopDrawing = () => {
+    setIsDrawing(false);
+    setLastPoint(null);
   };
 
   return (
     <canvas
       ref={canvasRef}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerOut={handlePointerUp}
-      onPointerCancel={handlePointerUp}
-      className="fixed inset-0 w-full h-full"
+      onPointerDown={startDrawing}
+      onPointerMove={draw}
+      onPointerUp={stopDrawing}
+      onPointerOut={stopDrawing}
+      onPointerCancel={stopDrawing}
+      onTouchStart={startDrawing}
+      onTouchMove={draw}
+      onTouchEnd={stopDrawing}
+      className="fixed inset-0 w-full h-full touch-none"
       style={{ 
         zIndex: -1,
-        touchAction: 'auto', // Allow normal touch behavior
+        touchAction: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none',
-        msUserSelect: 'none'
+        msUserSelect: 'none',
+        cursor: 'crosshair'
       }}
     />
   );
