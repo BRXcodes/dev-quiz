@@ -1,6 +1,6 @@
 export interface Question {
   id: number;
-  category: 'PHP' | 'MySQL';
+  category: 'PHP' | 'MySQL' | 'JavaScript' | 'Python' | 'React';
   difficulty: 'Easy' | 'Medium' | 'Hard';
   question: string;
   code?: string;
@@ -20,6 +20,6 @@ export interface QuizState {
 }
 
 export interface QuizFilters {
-  categories: ('PHP' | 'MySQL')[];
+  categories: ('PHP' | 'MySQL' | 'JavaScript' | 'Python' | 'React')[];
   difficulty: ('Easy' | 'Medium' | 'Hard')[];
 } 

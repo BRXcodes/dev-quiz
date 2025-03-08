@@ -55,13 +55,28 @@ export default function Quiz() {
 
   useEffect(() => {
     if (isQuizStarted) {
+      // First filter by category and difficulty
       const filtered = questions.filter(
         (q) =>
           filters.categories.includes(q.category) &&
           filters.difficulty.includes(q.difficulty)
       );
-      // Shuffle the filtered questions and take only 10
-      const shuffled = shuffleArray(filtered);
+
+      // Log for debugging
+      console.log('Selected filters:', filters);
+      console.log('Filtered questions:', filtered.map(q => ({ id: q.id, category: q.category, difficulty: q.difficulty })));
+
+      // Ensure we have enough questions of each difficulty
+      const byDifficulty = filters.difficulty.reduce((acc, diff) => {
+        const questionsOfDifficulty = filtered.filter(q => q.difficulty === diff);
+        const shuffled = shuffleArray(questionsOfDifficulty);
+        acc[diff] = shuffled.slice(0, Math.ceil(10 / filters.difficulty.length));
+        return acc;
+      }, {} as Record<string, Question[]>);
+
+      // Combine questions from each difficulty
+      const combined = Object.values(byDifficulty).flat();
+      const shuffled = shuffleArray(combined);
       setFilteredQuestions(shuffled.slice(0, 10));
     }
   }, [filters, isQuizStarted]);

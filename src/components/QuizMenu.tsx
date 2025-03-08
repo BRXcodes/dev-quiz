@@ -14,7 +14,7 @@ export default function QuizMenu({ onStartQuiz }: QuizMenuProps) {
   const [isShuffleCategories, setIsShuffleCategories] = useState(false);
   const [isShuffleDifficulty, setIsShuffleDifficulty] = useState(false);
 
-  const handleCategoryToggle = (category: 'PHP' | 'MySQL') => {
+  const handleCategoryToggle = (category: 'PHP' | 'MySQL' | 'JavaScript' | 'Python' | 'React') => {
     if (isShuffleCategories) return; // Don't allow manual selection in shuffle mode
     setFilters(prev => ({
       ...prev,
@@ -40,7 +40,7 @@ export default function QuizMenu({ onStartQuiz }: QuizMenuProps) {
       // When enabling shuffle, select all categories
       setFilters(prev => ({
         ...prev,
-        categories: ['PHP', 'MySQL']
+        categories: ['PHP', 'MySQL', 'JavaScript', 'Python', 'React']
       }));
     }
   };
@@ -89,13 +89,13 @@ export default function QuizMenu({ onStartQuiz }: QuizMenuProps) {
               </button>
             </div>
             <div className="flex flex-wrap gap-3">
-              {['PHP', 'MySQL'].map((category) => (
+              {['PHP', 'MySQL', 'JavaScript', 'Python', 'React'].map((category) => (
                 <button
                   key={category}
-                  onClick={() => handleCategoryToggle(category as 'PHP' | 'MySQL')}
+                  onClick={() => handleCategoryToggle(category as 'PHP' | 'MySQL' | 'JavaScript' | 'Python' | 'React')}
                   disabled={isShuffleCategories}
                   className={`px-6 py-3 rounded-xl text-lg font-medium transform transition-all duration-200 hover:scale-105 ${
-                    filters.categories.includes(category as 'PHP' | 'MySQL')
+                    filters.categories.includes(category as 'PHP' | 'MySQL' | 'JavaScript' | 'Python' | 'React')
                       ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                   } ${isShuffleCategories ? 'opacity-50 cursor-not-allowed' : ''}`}

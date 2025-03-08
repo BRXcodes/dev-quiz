@@ -1045,5 +1045,493 @@ class UserController {
     correctAnswer: 1,
     explanation: 'MVC (Model-View-Controller) separates application logic into three components: 1) Model: handles data and business logic, 2) View: handles presentation and UI, 3) Controller: handles user input and coordinates Model and View. Benefits include better organization, code reuse, and easier maintenance.',
     hint: 'Think about how to separate different aspects of an application.'
+  },
+  // JavaScript Questions (IDs 101-115)
+  {
+    id: 101,
+    category: 'JavaScript',
+    difficulty: 'Easy',
+    question: 'What is the difference between let and var in JavaScript?',
+    options: [
+      'They are completely identical',
+      'let has block scope, var has function scope',
+      'var is not supported in modern JavaScript',
+      'let cannot be reassigned'
+    ],
+    correctAnswer: 1,
+    explanation: 'let and var differ in their scoping rules: 1) let is block-scoped, meaning it only exists within the nearest { } block, 2) var is function-scoped and can be accessed throughout the function, 3) var variables are hoisted and initialized as undefined, while let variables are hoisted but not initialized (temporal dead zone), 4) var allows redeclaration, let does not.',
+    hint: 'Think about where these variables can be accessed from within your code.'
+  },
+  // Python Questions (IDs 201-215)
+  {
+    id: 201,
+    category: 'Python',
+    difficulty: 'Easy',
+    question: 'What is the difference between a list and a tuple in Python?',
+    code: `# List
+my_list = [1, 2, 3]
+my_list[0] = 4  # Valid
+
+# Tuple
+my_tuple = (1, 2, 3)
+my_tuple[0] = 4  # TypeError: 'tuple' object does not support item assignment`,
+    options: [
+      'No difference between them',
+      'Lists are mutable, tuples are immutable',
+      'Lists are faster than tuples',
+      'Tuples can store more items'
+    ],
+    correctAnswer: 1,
+    explanation: 'Key differences: 1) Lists are mutable (can be modified), tuples are immutable (cannot be modified), 2) Lists use square brackets [], tuples use parentheses (), 3) Tuples are slightly more memory efficient, 4) Tuples are commonly used for heterogeneous data, lists for homogeneous data.',
+    hint: 'Think about which one allows you to change its contents after creation.'
+  },
+  {
+    id: 202,
+    category: 'Python',
+    difficulty: 'Easy',
+    question: 'What is the purpose of the if __name__ == "__main__": statement?',
+    code: `def main():
+    print("Running directly")
+
+if __name__ == "__main__":
+    main()`,
+    options: [
+      'To define the main function',
+      'To check how the file is run',
+      'To import other modules',
+      'To set program name'
+    ],
+    correctAnswer: 1,
+    explanation: 'This statement checks whether the Python file is being run directly or being imported as a module. When a Python file is run directly, __name__ is set to "__main__". When imported as a module, __name__ is set to the module\'s name. This allows code to behave differently when run directly versus being imported.',
+    hint: 'Consider how Python files can be both run directly and imported as modules.'
+  },
+  {
+    id: 203,
+    category: 'Python',
+    difficulty: 'Easy',
+    question: 'What are list comprehensions in Python?',
+    code: `# Traditional way
+squares = []
+for x in range(10):
+    squares.append(x**2)
+
+# List comprehension
+squares = [x**2 for x in range(10)]`,
+    options: [
+      'Ways to sort lists',
+      'Concise way to create lists',
+      'List documentation',
+      'List validation methods'
+    ],
+    correctAnswer: 1,
+    explanation: 'List comprehensions provide a concise way to create lists based on existing lists or iterables. Benefits: 1) More readable and compact syntax, 2) Often faster than traditional for loops, 3) Can include conditions and nested loops, 4) Can be used with any iterable (lists, strings, ranges, etc.).',
+    hint: 'Think about a shorter way to write loops that create lists.'
+  },
+  {
+    id: 204,
+    category: 'Python',
+    difficulty: 'Easy',
+    question: 'What is the difference between == and is in Python?',
+    code: `a = [1, 2, 3]
+b = [1, 2, 3]
+c = a
+
+print(a == b)  # True (same value)
+print(a is b)  # False (different objects)
+print(a is c)  # True (same object)`,
+    options: [
+      'They are identical',
+      'One checks value, one checks identity',
+      'One is faster',
+      'One is deprecated'
+    ],
+    correctAnswer: 1,
+    explanation: '== checks if two objects have the same value, while is checks if they are the same object in memory. Key points: 1) is compares object identity (memory address), 2) == compares object value, 3) is is faster but should mainly be used for None comparisons, 4) Small integers and strings may be interned, giving unexpected is results.',
+    hint: 'Consider whether you want to check if two variables refer to the same object or just have the same value.'
+  },
+  {
+    id: 205,
+    category: 'Python',
+    difficulty: 'Easy',
+    question: 'What is the purpose of the with statement in Python?',
+    code: `# Without with statement
+f = open('file.txt', 'r')
+content = f.read()
+f.close()
+
+# With with statement
+with open('file.txt', 'r') as f:
+    content = f.read()`,
+    options: [
+      'To create loops',
+      'To handle resources safely',
+      'To define functions',
+      'To catch exceptions'
+    ],
+    correctAnswer: 1,
+    explanation: 'The with statement provides a clean way to handle resource management. Benefits: 1) Automatically handles cleanup (like closing files), 2) Works with any context manager object, 3) Ensures resources are properly released even if exceptions occur, 4) More readable and less error-prone than try/finally blocks.',
+    hint: 'Think about safely managing resources that need to be cleaned up after use.'
+  },
+  // React Questions (IDs 301-315)
+  {
+    id: 301,
+    category: 'React',
+    difficulty: 'Easy',
+    question: 'What is JSX in React?',
+    code: `function Welcome() {
+  return (
+    <div className="greeting">
+      <h1>Hello, World!</h1>
+    </div>
+  );
+}`,
+    options: [
+      'A JavaScript engine',
+      'A template language',
+      'JavaScript XML syntax extension',
+      'A build tool'
+    ],
+    correctAnswer: 2,
+    explanation: 'JSX is a syntax extension for JavaScript that allows you to write HTML-like code in your JavaScript. Key points: 1) Allows mixing HTML with JavaScript logic, 2) Gets transformed into regular JavaScript function calls during build, 3) Makes component code more readable and maintainable, 4) Helps prevent XSS by escaping values by default.',
+    hint: 'Think about how React lets you write HTML-like code in JavaScript.'
+  },
+  {
+    id: 302,
+    category: 'React',
+    difficulty: 'Easy',
+    question: 'What is the purpose of useState in React?',
+    code: `function Counter() {
+  const [count, setCount] = useState(0);
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      Count: {count}
+    </button>
+  );
+}`,
+    options: [
+      'To create global state',
+      'To manage component state',
+      'To handle routing',
+      'To optimize rendering'
+    ],
+    correctAnswer: 1,
+    explanation: 'useState is a React Hook that lets you add state to functional components. Features: 1) Returns current state and setter function, 2) Component re-renders when state changes, 3) State persists between renders, 4) Each useState call creates an independent state variable.',
+    hint: 'Consider how components remember and update their data over time.'
+  },
+  {
+    id: 303,
+    category: 'React',
+    difficulty: 'Easy',
+    question: 'What are props in React?',
+    code: `function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+
+<Welcome name="Alice" />`,
+    options: [
+      'Internal component state',
+      'Data passed to components',
+      'Styling properties',
+      'Event handlers'
+    ],
+    correctAnswer: 1,
+    explanation: 'Props are read-only data passed to React components. Key concepts: 1) Props flow down from parent to child components, 2) Props are immutable - components cannot modify their props, 3) Props can be any JavaScript value (strings, numbers, objects, functions), 4) Props help create reusable components.',
+    hint: 'Think about how components receive and use data from their parent components.'
+  },
+  {
+    id: 304,
+    category: 'React',
+    difficulty: 'Easy',
+    question: 'What is the virtual DOM in React?',
+    options: [
+      'A copy of the browser DOM',
+      'A lightweight DOM representation',
+      'A JavaScript engine',
+      'A browser extension'
+    ],
+    correctAnswer: 1,
+    explanation: 'The virtual DOM is a lightweight copy of the real DOM in memory. Process: 1) React creates virtual DOM when state changes, 2) Compares virtual DOM with previous version, 3) Calculates minimal needed changes, 4) Updates real DOM only where necessary. This makes React\'s rendering process more efficient.',
+    hint: 'Consider how React optimizes DOM updates to improve performance.'
+  },
+  {
+    id: 305,
+    category: 'React',
+    difficulty: 'Easy',
+    question: 'What is the purpose of the key prop in React lists?',
+    code: `function TodoList({ items }) {
+  return (
+    <ul>
+      {items.map(item => (
+        <li key={item.id}>{item.text}</li>
+      ))}
+    </ul>
+  );
+}`,
+    options: [
+      'For styling elements',
+      'For unique identification',
+      'For sorting items',
+      'For event handling'
+    ],
+    correctAnswer: 1,
+    explanation: 'The key prop helps React identify which items have changed in a list. Important points: 1) Must be unique among siblings, 2) Helps React optimize rendering of lists, 3) Should be stable across re-renders, 4) Don\'t use array index as key unless list is static.',
+    hint: 'Think about how React tracks individual items in a list of elements.'
+  },
+  {
+    id: 306,
+    category: 'React',
+    difficulty: 'Medium',
+    question: 'What are React hooks and why were they introduced?',
+    code: `function Example() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    document.title = \`Count: \${count}\`;
+  }, [count]);
+  return <button onClick={() => setCount(count + 1)}>Click me</button>;
+}`,
+    options: [
+      'Class component features',
+      'State in function components',
+      'Performance optimizations',
+      'Routing solutions'
+    ],
+    correctAnswer: 1,
+    explanation: 'Hooks allow using state and other React features in function components. Benefits: 1) Reuse stateful logic between components, 2) Split complex components into smaller functions, 3) Use React features without classes, 4) Better code organization. Common hooks include useState, useEffect, useContext, etc.',
+    hint: 'Consider how function components can use features previously only available in class components.'
+  },
+  {
+    id: 307,
+    category: 'React',
+    difficulty: 'Medium',
+    question: 'What is the useEffect hook used for?',
+    code: `useEffect(() => {
+  // Subscribe to service
+  return () => {
+    // Cleanup subscription
+  };
+}, [dependency]);`,
+    options: [
+      'State management',
+      'Side effects handling',
+      'Event handling',
+      'Component styling'
+    ],
+    correctAnswer: 1,
+    explanation: 'useEffect handles side effects in function components. Use cases: 1) Data fetching, 2) Subscriptions, 3) DOM manipulation, 4) Cleanup operations. The dependency array controls when the effect runs, and the cleanup function prevents memory leaks.',
+    hint: 'Think about operations that need to happen after rendering or need cleanup.'
+  },
+  {
+    id: 308,
+    category: 'React',
+    difficulty: 'Medium',
+    question: 'What is the Context API in React?',
+    code: `const ThemeContext = React.createContext('light');
+
+function App() {
+  return (
+    <ThemeContext.Provider value="dark">
+      <ThemedButton />
+    </ThemeContext.Provider>
+  );
+}`,
+    options: [
+      'Global state management',
+      'Prop drilling solution',
+      'Routing system',
+      'Data fetching tool'
+    ],
+    correctAnswer: 1,
+    explanation: 'Context provides a way to pass data through the component tree without manually passing props. Uses: 1) Sharing global data (theme, user preferences), 2) Avoiding prop drilling, 3) Providing configuration to deeply nested components, 4) Managing application-wide state.',
+    hint: 'Consider how to share data with distant components without passing props through every level.'
+  },
+  {
+    id: 309,
+    category: 'React',
+    difficulty: 'Medium',
+    question: 'What is prop drilling and how can it be avoided?',
+    code: `// Prop Drilling
+function GrandParent({ user }) {
+  return <Parent user={user} />;
+}
+function Parent({ user }) {
+  return <Child user={user} />;
+}
+function Child({ user }) {
+  return <div>{user.name}</div>;
+}
+
+// Solution with Context
+const UserContext = React.createContext();
+function GrandParent({ user }) {
+  return (
+    <UserContext.Provider value={user}>
+      <Parent />
+    </UserContext.Provider>
+  );
+}`,
+    options: [
+      'Using more components',
+      'Using Context or state management',
+      'Reducing props',
+      'Using class components'
+    ],
+    correctAnswer: 1,
+    explanation: 'Prop drilling occurs when props are passed through components that don\'t need them. Solutions: 1) React Context for global state, 2) State management libraries (Redux, MobX), 3) Component composition, 4) Render props pattern. Choose based on scale and complexity of data sharing needs.',
+    hint: 'Think about alternatives to passing props through multiple levels of components.'
+  },
+  {
+    id: 310,
+    category: 'React',
+    difficulty: 'Medium',
+    question: 'What is the purpose of React.memo?',
+    code: `const MemoizedComponent = React.memo(function MyComponent(props) {
+  return <div>{props.value}</div>;
+}, (prevProps, nextProps) => {
+  return prevProps.value === nextProps.value;
+});`,
+    options: [
+      'Memory management',
+      'Performance optimization',
+      'Error handling',
+      'State management'
+    ],
+    correctAnswer: 1,
+    explanation: 'React.memo is a higher-order component for performance optimization. Features: 1) Memoizes component renders, 2) Skips rendering if props haven\'t changed, 3) Can provide custom comparison function, 4) Useful for expensive computations or renders. Use when component renders often with same props.',
+    hint: 'Consider how to prevent unnecessary re-renders of components.'
+  },
+  {
+    id: 311,
+    category: 'React',
+    difficulty: 'Hard',
+    question: 'What are React Fiber and reconciliation?',
+    code: `// React internally handles updates
+setState(newState);
+// Fiber breaks work into units
+// and can pause/resume rendering`,
+    options: [
+      'Build tools',
+      'React\'s core algorithm',
+      'Testing utilities',
+      'State management'
+    ],
+    correctAnswer: 1,
+    explanation: 'React Fiber is React\'s reconciliation engine. Features: 1) Breaks rendering work into chunks, 2) Can pause and resume work, 3) Assigns priority to different types of updates, 4) Enables features like concurrent mode. This makes React apps more responsive by not blocking the main thread.',
+    hint: 'Think about how React schedules and processes updates internally.'
+  },
+  {
+    id: 312,
+    category: 'React',
+    difficulty: 'Hard',
+    question: 'What are React error boundaries?',
+    code: `class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+  
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+  
+  componentDidCatch(error, info) {
+    logErrorToService(error, info);
+  }
+  
+  render() {
+    if (this.state.hasError) {
+      return <h1>Something went wrong.</h1>;
+    }
+    return this.props.children;
+  }
+}`,
+    options: [
+      'Regular try-catch blocks',
+      'Component error handlers',
+      'Testing utilities',
+      'Debug tools'
+    ],
+    correctAnswer: 1,
+    explanation: 'Error boundaries are components that catch JavaScript errors in child components. Features: 1) Prevent entire app from crashing, 2) Can log errors to error reporting services, 3) Show fallback UI, 4) Must be class components. They don\'t catch errors in event handlers, async code, or their own errors.',
+    hint: 'Consider how to handle errors in React components gracefully.'
+  },
+  {
+    id: 313,
+    category: 'React',
+    difficulty: 'Hard',
+    question: 'What is the useReducer hook and when should it be used?',
+    code: `const [state, dispatch] = useReducer(reducer, initialState);
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'decrement':
+      return { count: state.count - 1 };
+    default:
+      return state;
+  }
+}`,
+    options: [
+      'Simple state updates',
+      'Complex state logic',
+      'API calls handling',
+      'Component lifecycle'
+    ],
+    correctAnswer: 1,
+    explanation: 'useReducer manages complex state logic in components. Use cases: 1) State updates depend on multiple factors, 2) Related state updates should be handled together, 3) Complex state shape with nested data, 4) When state logic should be tested independently. Similar to Redux\'s pattern but for component-level state.',
+    hint: 'Think about when useState becomes too complicated for state management.'
+  },
+  {
+    id: 314,
+    category: 'React',
+    difficulty: 'Hard',
+    question: 'What are React\'s Suspense and lazy loading?',
+    code: `const OtherComponent = React.lazy(() => import('./OtherComponent'));
+
+function MyComponent() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <OtherComponent />
+    </Suspense>
+  );
+}`,
+    options: [
+      'Error handling',
+      'Code splitting features',
+      'State management',
+      'Testing utilities'
+    ],
+    correctAnswer: 1,
+    explanation: 'Suspense enables lazy loading of components and data. Benefits: 1) Code splitting - load components on demand, 2) Reduce initial bundle size, 3) Show loading states while content loads, 4) Handle async dependencies gracefully. Future versions will support data fetching with Suspense.',
+    hint: 'Consider how to load parts of your application only when they\'re needed.'
+  },
+  {
+    id: 315,
+    category: 'React',
+    difficulty: 'Hard',
+    question: 'What are React portals and when should they be used?',
+    code: `function Modal({ children }) {
+  return ReactDOM.createPortal(
+    children,
+    document.getElementById('modal-root')
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <h1>App Content</h1>
+      <Modal>
+        <h2>Modal Content</h2>
+      </Modal>
+    </div>
+  );
+}`,
+    options: [
+      'Component communication',
+      'DOM node rendering',
+      'State management',
+      'Event handling'
+    ],
+    correctAnswer: 1,
+    explanation: 'Portals render children into a DOM node outside their parent component\'s hierarchy. Use cases: 1) Modals and dialogs, 2) Tooltips and popovers, 3) Floating menus, 4) Widgets that need to break out of container CSS. Events still bubble up through React\'s tree regardless of portal location.',
+    hint: 'Think about when components need to render outside their parent\'s DOM hierarchy.'
   }
 ]; 
