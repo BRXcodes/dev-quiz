@@ -66,7 +66,9 @@ export default function DrawingCanvas() {
 
   const startDrawing = (event: React.TouchEvent | React.MouseEvent | React.PointerEvent) => {
     const point = getCoordinates(event.nativeEvent);
-    if (!point || isQuizArea(point)) return;
+    if (!point) return;
+    
+    if (isQuizArea(point)) return;
 
     setIsDrawing(true);
     setLastPoint(point);
@@ -76,10 +78,10 @@ export default function DrawingCanvas() {
     if (!isDrawing) return;
 
     const newPoint = getCoordinates(event.nativeEvent);
-    if (!newPoint || !lastPoint || !canvasRef.current || isQuizArea(newPoint)) {
-      if (isQuizArea(newPoint)) {
-        stopDrawing();
-      }
+    if (!newPoint || !lastPoint || !canvasRef.current) return;
+    
+    if (isQuizArea(newPoint)) {
+      stopDrawing();
       return;
     }
 
