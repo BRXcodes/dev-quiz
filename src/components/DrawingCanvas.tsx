@@ -11,6 +11,7 @@ export default function DrawingCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [lastPoint, setLastPoint] = useState<Point | null>(null);
+  const [isPencil, setIsPencil] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -27,8 +28,8 @@ export default function DrawingCanvas() {
       canvas.style.height = `${window.innerHeight}px`;
       
       ctx.scale(scale, scale);
-      ctx.strokeStyle = '#3b82f6'; // Change to blue for better visibility
-      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
     };
@@ -65,18 +66,29 @@ export default function DrawingCanvas() {
   };
 
   const handlePointerDown = (event: React.PointerEvent) => {
-    if (event.pointerType === 'touch') return; // Ignore touch events
+    // Check if it's an Apple Pencil (or other stylus)
+    if (event.pointerType === 'pen') {
+      setIsPencil(true);
+    } else if (event.pointerType === 'touch') {
+      setIsPencil(false);
+      return; // Allow normal touch scrolling
+    }
     
     const point = getCoordinates(event.nativeEvent);
     if (isQuizArea(point)) return;
 
     setIsDrawing(true);
     setLastPoint(point);
-    (event.target as HTMLCanvasElement).setPointerCapture(event.pointerId);
+    
+    // Only capture pointer for pencil events
+    if (event.pointerType === 'pen') {
+      (event.target as HTMLCanvasElement).setPointerCapture(event.pointerId);
+    }
   };
 
   const handlePointerMove = (event: React.PointerEvent) => {
-    if (!isDrawing || !lastPoint || event.pointerType === 'touch') return;
+    // Only draw if using pencil and isDrawing is true
+    if (!isDrawing || !lastPoint || !isPencil) return;
 
     const newPoint = getCoordinates(event.nativeEvent);
     if (isQuizArea(newPoint)) {
@@ -96,11 +108,12 @@ export default function DrawingCanvas() {
   };
 
   const handlePointerUp = (event: React.PointerEvent) => {
-    if (event.pointerType === 'touch') return;
-    
-    setIsDrawing(false);
-    setLastPoint(null);
-    (event.target as HTMLCanvasElement).releasePointerCapture(event.pointerId);
+    if (event.pointerType === 'pen') {
+      setIsPencil(false);
+      setIsDrawing(false);
+      setLastPoint(null);
+      (event.target as HTMLCanvasElement).releasePointerCapture(event.pointerId);
+    }
   };
 
   return (
@@ -110,10 +123,11 @@ export default function DrawingCanvas() {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerOut={handlePointerUp}
+      onPointerCancel={handlePointerUp}
       className="fixed inset-0 w-full h-full"
       style={{ 
         zIndex: -1,
-        touchAction: 'pan-x pan-y',
+        touchAction: 'auto', // Allow normal touch behavior
         userSelect: 'none',
         WebkitUserSelect: 'none',
         msUserSelect: 'none'
