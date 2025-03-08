@@ -32,6 +32,7 @@ export default function DrawingCanvas() {
       ctx.strokeStyle = '#3b82f6';
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
+      ctx.lineWidth = 2;
     };
 
     resizeCanvas();
@@ -41,6 +42,14 @@ export default function DrawingCanvas() {
       window.removeEventListener('resize', resizeCanvas);
     };
   }, []);
+
+  useEffect(() => {
+    // Update quiz container z-index when drawing is enabled/disabled
+    const quizContainer = document.querySelector('.quiz-container');
+    if (quizContainer) {
+      (quizContainer as HTMLElement).style.zIndex = isEnabled ? '1' : '2';
+    }
+  }, [isEnabled]);
 
   const isQuizArea = (x: number, y: number): boolean => {
     const quizContainer = document.querySelector('.quiz-container');
@@ -59,14 +68,21 @@ export default function DrawingCanvas() {
     if (!isEnabled) return;
     e.preventDefault();
     
-    const x = e.clientX;
-    const y = e.clientY;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
     const pressure = e.pressure || 0.5;
 
     if (isQuizArea(x, y)) return;
 
     setIsDrawing(true);
     setLastPoint({ x, y, pressure });
+    
+    // Capture pointer to ensure we get all events
+    canvas.setPointerCapture(e.pointerId);
   };
 
   const draw = (e: React.PointerEvent) => {
@@ -77,12 +93,13 @@ export default function DrawingCanvas() {
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    const x = e.clientX;
-    const y = e.clientY;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
     const pressure = e.pressure || 0.5;
 
     if (isQuizArea(x, y)) {
-      stopDrawing();
+      stopDrawing(e);
       return;
     }
 
@@ -95,9 +112,15 @@ export default function DrawingCanvas() {
     setLastPoint({ x, y, pressure });
   };
 
-  const stopDrawing = () => {
+  const stopDrawing = (e: React.PointerEvent) => {
+    if (!isEnabled) return;
     setIsDrawing(false);
     setLastPoint(null);
+
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.releasePointerCapture(e.pointerId);
+    }
   };
 
   const clearCanvas = () => {
@@ -109,7 +132,7 @@ export default function DrawingCanvas() {
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 flex gap-2 z-50">
+      <div className="fixed bottom-4 right-4 flex gap-2 z-[100]">
         <button
           onClick={() => setIsEnabled(!isEnabled)}
           className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
@@ -129,21 +152,26 @@ export default function DrawingCanvas() {
           </button>
         )}
       </div>
-      <canvas
-        ref={canvasRef}
-        onPointerDown={startDrawing}
-        onPointerMove={draw}
-        onPointerUp={stopDrawing}
-        onPointerOut={stopDrawing}
-        onPointerCancel={stopDrawing}
-        className="fixed inset-0 w-full h-full touch-none"
+      <div 
+        className="fixed inset-0 w-full h-full pointer-events-none"
         style={{ 
-          zIndex: -1,
-          touchAction: isEnabled ? 'none' : 'auto',
-          pointerEvents: isEnabled ? 'auto' : 'none',
-          cursor: isEnabled ? 'crosshair' : 'default'
+          zIndex: isEnabled ? 10 : -1,
         }}
-      />
+      >
+        <canvas
+          ref={canvasRef}
+          onPointerDown={startDrawing}
+          onPointerMove={draw}
+          onPointerUp={stopDrawing}
+          onPointerOut={stopDrawing}
+          onPointerCancel={stopDrawing}
+          className="w-full h-full touch-none"
+          style={{ 
+            pointerEvents: isEnabled ? 'auto' : 'none',
+            cursor: isEnabled ? 'crosshair' : 'default'
+          }}
+        />
+      </div>
     </>
   );
 } 
