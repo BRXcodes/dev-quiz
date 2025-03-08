@@ -1,9 +1,11 @@
 import Quiz from '../components/Quiz';
+import DrawingCanvas from '../components/DrawingCanvas';
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-50 to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
-      <div className="container mx-auto px-4 py-12">
+      <DrawingCanvas />
+      <div className="container mx-auto px-4 py-12 quiz-container relative">
         <header className="text-center mb-12 animate-fadeIn">
           <div className="inline-block mb-6">
             <span className="inline-block px-6 py-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 font-semibold text-lg mb-4">
