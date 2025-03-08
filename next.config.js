@@ -3,9 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   distDir: '.next',
-  experimental: {
-    // Remove appDir since it's now stable in Next.js 14
-  }
+  trailingSlash: false,
+  skipTrailingSlashRedirect: true,
+  swcMinify: true
 }
 
 module.exports = nextConfig 
