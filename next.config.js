@@ -2,7 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
-  swcMinify: true
+  swcMinify: true,
+  distDir: '.next',
+  images: {
+    unoptimized: true
+  },
+  typescript: {
+    ignoreBuildErrors: false
+  }
 }
 
 module.exports = nextConfig 
