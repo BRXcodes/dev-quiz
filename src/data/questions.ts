@@ -237,5 +237,160 @@ TRUNCATE TABLE users;`,
     ],
     correctAnswer: 1,
     explanation: 'EXPLAIN shows how MySQL executes a query, including information about indexes used, table join order, and number of rows examined. It is useful for query optimization.'
+  },
+  {
+    id: 16,
+    category: 'PHP',
+    difficulty: 'Medium',
+    question: 'What is the purpose of the PHP trait?',
+    options: [
+      'To create multiple inheritance',
+      'To define interface methods',
+      'To reuse method sets across multiple classes',
+      'To create abstract classes'
+    ],
+    correctAnswer: 2,
+    explanation: 'Traits are used to declare methods that can be used in multiple classes, allowing for code reuse without multiple inheritance.'
+  },
+  {
+    id: 17,
+    category: 'MySQL',
+    difficulty: 'Hard',
+    question: 'What is the difference between MyISAM and InnoDB storage engines?',
+    options: [
+      'MyISAM is newer than InnoDB',
+      'MyISAM supports transactions while InnoDB does not',
+      'InnoDB supports foreign keys and transactions, MyISAM does not',
+      'There is no difference between them'
+    ],
+    correctAnswer: 2,
+    explanation: 'InnoDB supports foreign keys and transactions (ACID compliance), while MyISAM does not. InnoDB also supports row-level locking, making it better for write-heavy applications.'
+  },
+  {
+    id: 18,
+    category: 'PHP',
+    difficulty: 'Easy',
+    question: 'What is the purpose of the PHP header() function?',
+    options: [
+      'To create HTML headers',
+      'To send raw HTTP headers',
+      'To style the page header',
+      'To include header files'
+    ],
+    correctAnswer: 1,
+    explanation: 'The header() function sends raw HTTP headers to the client. It must be called before any actual output is sent.'
+  },
+  {
+    id: 19,
+    category: 'MySQL',
+    difficulty: 'Medium',
+    question: 'What is a stored procedure in MySQL?',
+    code: `DELIMITER //
+CREATE PROCEDURE GetAllUsers()
+BEGIN
+    SELECT * FROM users;
+END //
+DELIMITER ;`,
+    options: [
+      'A way to store query results',
+      'A saved set of SQL statements that can be reused',
+      'A method to backup data',
+      'A type of database index'
+    ],
+    correctAnswer: 1,
+    explanation: 'A stored procedure is a prepared SQL code that can be saved and reused. It can accept parameters and perform complex operations.'
+  },
+  {
+    id: 20,
+    category: 'PHP',
+    difficulty: 'Hard',
+    question: 'What is the output of this code?',
+    code: `$array = [1, 2, 3];
+$ref = &$array;
+unset($array);
+var_dump($ref);`,
+    options: [
+      'NULL',
+      'Array is undefined error',
+      'array(3) { [0]=> int(1) [1]=> int(2) [2]=> int(3) }',
+      'Reference error'
+    ],
+    correctAnswer: 2,
+    explanation: 'When using references, unsetting the original variable does not affect the reference. $ref still holds the array values.'
+  },
+  {
+    id: 21,
+    category: 'MySQL',
+    difficulty: 'Easy',
+    question: 'What is the purpose of the LIMIT clause in MySQL?',
+    code: 'SELECT * FROM users LIMIT 10 OFFSET 20;',
+    options: [
+      'To limit the number of tables in a database',
+      'To restrict the number of rows returned',
+      'To limit the size of the database',
+      'To limit query execution time'
+    ],
+    correctAnswer: 1,
+    explanation: 'LIMIT clause restricts the number of rows returned by a query. With OFFSET, it is commonly used for pagination.'
+  },
+  {
+    id: 22,
+    category: 'PHP',
+    difficulty: 'Medium',
+    question: 'What is the difference between htmlspecialchars() and htmlentities()?',
+    options: [
+      'They are exactly the same',
+      'htmlspecialchars() converts only special characters, htmlentities() converts all applicable characters',
+      'htmlentities() is faster than htmlspecialchars()',
+      'htmlspecialchars() is deprecated'
+    ],
+    correctAnswer: 1,
+    explanation: 'htmlspecialchars() converts special characters like < > & " \', while htmlentities() converts all applicable characters to HTML entities.'
+  },
+  {
+    id: 23,
+    category: 'MySQL',
+    difficulty: 'Hard',
+    question: 'What is a deadlock in MySQL and how can it be prevented?',
+    options: [
+      'A server crash that cannot be recovered',
+      'When two transactions each hold locks that the other needs',
+      'When a query never finishes executing',
+      'When the database is full'
+    ],
+    correctAnswer: 1,
+    explanation: 'A deadlock occurs when two transactions mutually hold and request locks, blocking each other. It can be prevented by consistent order of operations and keeping transactions short.'
+  },
+  {
+    id: 24,
+    category: 'PHP',
+    difficulty: 'Easy',
+    question: 'What is the purpose of the PHP isset() function?',
+    code: `$value = null;
+var_dump(isset($value));
+var_dump(isset($undefined));`,
+    options: [
+      'To set a variable value',
+      'To check if a variable is set and not null',
+      'To initialize variables',
+      'To validate form input'
+    ],
+    correctAnswer: 1,
+    explanation: 'isset() checks if a variable is set and not null. It returns false for null values and undefined variables.'
+  },
+  {
+    id: 25,
+    category: 'MySQL',
+    difficulty: 'Medium',
+    question: 'What is the purpose of the MySQL EXPLAIN statement?',
+    code: 'EXPLAIN SELECT * FROM users WHERE email LIKE "%@gmail.com";',
+    options: [
+      'To explain SQL syntax',
+      'To analyze and display query execution plan',
+      'To document database schema',
+      'To debug SQL errors'
+    ],
+    correctAnswer: 1,
+    explanation: 'EXPLAIN shows how MySQL executes a query, including information about indexes used and join operations, helping in query optimization.'
   }
 ]; 
