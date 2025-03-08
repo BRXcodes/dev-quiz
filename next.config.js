@@ -5,7 +5,11 @@ const nextConfig = {
   distDir: '.next',
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
-  swcMinify: true
+  swcMinify: true,
+  basePath: '',
+  experimental: {
+    appDir: true
+  }
 }
 
 module.exports = nextConfig 
