@@ -52,26 +52,27 @@ export default function Quiz() {
     const newAnswers = [...quizState.answers, answerIndex];
     const newScore = isCorrect ? quizState.score + 1 : quizState.score;
 
-    // Wait for 2 seconds before moving to next question
-    setTimeout(() => {
-      if (quizState.currentQuestionIndex === filteredQuestions.length - 1) {
-        setQuizState({
-          ...quizState,
-          answers: newAnswers,
-          score: newScore,
-          showResults: true,
-        });
-      } else {
-        setQuizState({
-          ...quizState,
-          currentQuestionIndex: quizState.currentQuestionIndex + 1,
-          answers: newAnswers,
-          score: newScore,
-        });
-        setSelectedAnswer(null);
-        setShowExplanation(false);
-      }
-    }, 2000);
+    setQuizState({
+      ...quizState,
+      score: newScore,
+      answers: newAnswers,
+    });
+  };
+
+  const handleNext = () => {
+    if (quizState.currentQuestionIndex === filteredQuestions.length - 1) {
+      setQuizState(prev => ({
+        ...prev,
+        showResults: true,
+      }));
+    } else {
+      setQuizState(prev => ({
+        ...prev,
+        currentQuestionIndex: prev.currentQuestionIndex + 1,
+      }));
+      setSelectedAnswer(null);
+      setShowExplanation(false);
+    }
   };
 
   const resetQuiz = () => {
@@ -274,6 +275,15 @@ export default function Quiz() {
               </span>
               {currentQuestion.explanation}
             </p>
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={handleNext}
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 text-white text-lg font-medium rounded-xl
+                  shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105"
+              >
+                {quizState.currentQuestionIndex === filteredQuestions.length - 1 ? 'Show Results' : 'Next Question'}
+              </button>
+            </div>
           </div>
         )}
       </div>
